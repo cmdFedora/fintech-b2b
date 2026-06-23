@@ -21,17 +21,17 @@ public class IdempotencyAspect {
 
     private final IdempotencyService idempotencyService;
     private final UsuarioAutenticadoPort usuarioAutenticadoPort;
-    private final ObjectMapper objectMapper;
+    
+    // Instanciamos ObjectMapper manualmente y le pedimos que registre módulos para soportar LocalDateTime
+    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
+    // Eliminamos el ObjectMapper de la inyección del constructor
     public IdempotencyAspect(IdempotencyService idempotencyService,
-                             UsuarioAutenticadoPort usuarioAutenticadoPort,
-                             ObjectMapper objectMapper) {
+                             UsuarioAutenticadoPort usuarioAutenticadoPort) {
         this.idempotencyService = idempotencyService;
         this.usuarioAutenticadoPort = usuarioAutenticadoPort;
-        this.objectMapper = objectMapper;
     }
 
-    // Intercepta mágicamente el método realizarTransferencia de tu controlador
     @Around("execution(* com.fintech.b2b.infrastructure.adapter.input.rest.TransferenciaController.realizarTransferencia(..)) && args(request, idempotencyKey)")
     public Object interceptar(ProceedingJoinPoint joinPoint, TransferenciaRequest request, UUID idempotencyKey) throws Throwable {
 
@@ -69,7 +69,7 @@ public class IdempotencyAspect {
         } catch (Exception ex) {
             // Si estalla por negocio (ej. Saldo Insuficiente), marcamos la llave como FAILED
             idempotencyService.actualizarRespuesta(clientId, key, ex.getMessage(), EstadoIdempotencia.FAILED);
-            throw ex; // Dejamos que el GlobalExceptionHandler atrape el error normalmente
+            throw ex; 
         }
     }
 }
