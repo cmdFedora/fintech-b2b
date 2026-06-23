@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fintech_db
+    username: postgres
+    password: "102030#Asd%"
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true # Formatea el SQL en la consola para que sea legible
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+# Clave secreta estática solo para pruebas locales
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970

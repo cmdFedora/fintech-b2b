@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: b2b-fintech-api
+  profiles:
+    active: dev
+
+jwt:
+  expiration: 86400000

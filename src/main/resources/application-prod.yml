@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    # Lee las variables del servidor, si no existen, la app no arranca
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false # Apagado por seguridad en producción
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+jwt:
+  # La clave secreta debe venir de una variable de entorno segura en el servidor
+  secret: ${JWT_SECRET}
