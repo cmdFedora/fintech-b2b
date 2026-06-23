@@ -10,6 +10,22 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    # 1. Levantamos una BD clon de tu entorno local
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: fintech_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: "102030#Asd%" 
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - name: Descargar el código
       uses: actions/checkout@v4
