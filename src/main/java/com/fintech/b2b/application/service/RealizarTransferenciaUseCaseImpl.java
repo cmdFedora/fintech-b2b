@@ -37,10 +37,6 @@ public class RealizarTransferenciaUseCaseImpl implements RealizarTransferenciaUs
     @Override
     @Transactional // 🔥 Garantiza atomicidad absoluta: Si falla el Ledger, el saldo hace rollback automático.
     public Transaccion ejecutar(RealizarTransferenciaCommand command) {
-        
-        if (transaccionRepositoryPort.buscarPorCorrelationId(command.idempotencyKey().toString()).isPresent()) {
-            throw new OperacionInvalidaException("La transferencia con la llave de idempotencia provista ya fue procesada anteriormente.");
-        }
 
         Long usuarioOrigenId = usuarioAutenticadoPort.getIdUsuarioActual();
 
