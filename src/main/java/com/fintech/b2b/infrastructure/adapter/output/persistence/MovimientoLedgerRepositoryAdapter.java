@@ -4,6 +4,8 @@ import com.fintech.b2b.domain.model.MovimientoLedger;
 import com.fintech.b2b.domain.model.port.MovimientoLedgerRepositoryPort;
 import com.fintech.b2b.infrastructure.adapter.output.persistence.entity.MovimientoLedgerEntity;
 import com.fintech.b2b.infrastructure.adapter.output.persistence.repository.MovimientoLedgerJpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component // Esta anotación salva a Spring Boot del error de inyección
@@ -20,6 +22,14 @@ public class MovimientoLedgerRepositoryAdapter implements MovimientoLedgerReposi
         MovimientoLedgerEntity entity = mapearAEntity(movimiento);
         MovimientoLedgerEntity savedEntity = jpaRepository.save(entity);
         return mapearADominio(savedEntity);
+    }
+    
+    @Override
+    public Page<MovimientoLedger> obtenerPorBilleteraId(Long billeteraId, Pageable pageable) {
+        // 1. Ejecutamos la consulta SQL paginada a través de Spring Data
+        Page<MovimientoLedgerEntity> paginaEntidades = jpaRepository.findByBilleteraId(billeteraId, pageable);
+        // 2. Transformamos la página completa de Entidad a Dominio de forma elegante
+        return paginaEntidades.map(this::mapearADominio);
     }
 
     // --- Mapeadores ---
