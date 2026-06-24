@@ -1,6 +1,5 @@
 package com.fintech.b2b.infrastructure.adapter.output.persistence;
 
-import com.fintech.b2b.domain.model.EstadoTransaccion;
 import com.fintech.b2b.domain.model.Transaccion;
 import com.fintech.b2b.domain.model.port.TransaccionRepositoryPort;
 import com.fintech.b2b.infrastructure.adapter.output.persistence.entity.TransaccionEntity;
@@ -46,19 +45,17 @@ public class TransaccionRepositoryAdapter implements TransaccionRepositoryPort {
     }
 
     private Transaccion mapearADominio(TransaccionEntity entity, Long origenId, Long destinoId) {
-        Transaccion transaccion = Transaccion.crear(
-                origenId, 
-                destinoId, 
-                entity.getMontoTotal(), 
-                entity.getConcepto(), 
-                UUID.fromString(entity.getCorrelationId())
+        // Ahora sí, le inyectamos el ID que viene de la base de datos (entity.getId())
+        return Transaccion.reconstituir(
+                entity.getId(), // ¡Este es el ID que faltaba!
+                origenId,
+                destinoId,
+                entity.getMontoTotal(),
+                entity.getConcepto(),
+                entity.getFechaCreacion(), // Asumiendo que tu entidad tiene un getFechaCreacion()
+                entity.getCorrelationId() != null ? UUID.fromString(entity.getCorrelationId()) : null,
+                entity.getEstado()
         );
         
-        if (entity.getEstado() == EstadoTransaccion.COMPLETED) {
-            transaccion.completar();
-        } else if (entity.getEstado() == EstadoTransaccion.FAILED) {
-            transaccion.marcarComoFallida();
-        }
-        return transaccion;
     }
 }

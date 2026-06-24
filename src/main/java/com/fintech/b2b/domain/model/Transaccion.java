@@ -56,6 +56,12 @@ public class Transaccion {
                 EstadoTransaccion.PENDING // Nace pendiente
         );
     }
+    
+    public static Transaccion reconstituir(Long id, Long billeteraOrigenId, Long billeteraDestinoId, 
+            							  BigDecimal monto, String concepto, LocalDateTime fecha, 
+            							  UUID idempotencyKey, EstadoTransaccion estado) {
+    	return new Transaccion(id, billeteraOrigenId, billeteraDestinoId, monto, concepto, fecha, idempotencyKey, estado);
+    }
 
     public void completar() {
         this.estado = EstadoTransaccion.COMPLETED;
