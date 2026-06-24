@@ -30,20 +30,18 @@ public class RealizarTransferenciaUseCaseImpl implements RealizarTransferenciaUs
     
     // Nuevas dependencias para el Outbox
     private final OutboxEventRepositoryPort outboxEventRepositoryPort;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public RealizarTransferenciaUseCaseImpl(BilleteraRepositoryPort billeteraRepositoryPort,
-                                           TransaccionRepositoryPort transaccionRepositoryPort,
-                                           MovimientoLedgerRepositoryPort movimientoLedgerRepositoryPort,
-                                           UsuarioAutenticadoPort usuarioAutenticadoPort,
-                                           OutboxEventRepositoryPort outboxEventRepositoryPort,
-                                           ObjectMapper objectMapper) {
-        this.billeteraRepositoryPort = billeteraRepositoryPort;
-        this.transaccionRepositoryPort = transaccionRepositoryPort;
-        this.movimientoLedgerRepositoryPort = movimientoLedgerRepositoryPort;
-        this.usuarioAutenticadoPort = usuarioAutenticadoPort;
-        this.outboxEventRepositoryPort = outboxEventRepositoryPort;
-        this.objectMapper = objectMapper;
+            								TransaccionRepositoryPort transaccionRepositoryPort,
+            								MovimientoLedgerRepositoryPort movimientoLedgerRepositoryPort,
+            								UsuarioAutenticadoPort usuarioAutenticadoPort,
+            								OutboxEventRepositoryPort outboxEventRepositoryPort) {
+    	this.billeteraRepositoryPort = billeteraRepositoryPort;
+    	this.transaccionRepositoryPort = transaccionRepositoryPort;
+    	this.movimientoLedgerRepositoryPort = movimientoLedgerRepositoryPort;
+    	this.usuarioAutenticadoPort = usuarioAutenticadoPort;
+    	this.outboxEventRepositoryPort = outboxEventRepositoryPort;
     }
 
     @Override
