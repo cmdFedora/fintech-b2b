@@ -17,3 +17,9 @@ spring:
 jwt:
   # La clave secreta debe venir de una variable de entorno segura en el servidor
   secret: ${JWT_SECRET}
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
