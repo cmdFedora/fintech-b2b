@@ -1,0 +1,77 @@
+📖 Guía de Pruebas: B2B Fintech API (Vía Swagger)
+Esta guía detalla cómo probar los endpoints financieros protegidos de la API utilizando la interfaz gráfica de Swagger. Dado que el sistema está blindado con seguridad JWT y arquitectura Hexagonal, es estrictamente necesario autenticarse antes de realizar cualquier operación.
+
+Prerrequisito
+Asegúrate de que la aplicación Spring Boot esté corriendo en tu entorno local (perfil dev) y que la base de datos PostgreSQL esté levantada.
+
+Paso 1: Generar el Token de Acceso (Pase VIP)
+Actualmente, el módulo de autenticación (Login) no está expuesto, por lo que usaremos un script interno para generar un token válido para el usuario de pruebas (ID: 998, Rol: ROLE_EMPLEADO).
+
+Abre el proyecto en tu IDE (STS, IntelliJ o VSCode).
+
+Navega a la carpeta de pruebas src/test/java/... y busca la clase GeneradorTokenTest.
+
+Ejecuta la prueba unitaria fabricarTokenVIP().
+
+En la consola del IDE, aparecerá un texto largo que empieza con eyJ.... Copia todo ese texto sin espacios. Este es tu Token JWT.
+
+Paso 2: Autenticarse en Swagger
+Abre tu navegador y dirígete a: http://localhost:8080/swagger-ui.html
+
+En la parte superior derecha de la página, haz clic en el botón verde "Authorize" (con el ícono de un candado abierto 🔓).
+
+Aparecerá una ventana modal. En el campo de texto, pega el Token JWT que copiaste en el Paso 1.
+
+Haz clic en "Authorize" y luego cierra la ventana.
+
+Verifica que el candado ahora aparezca cerrado (🔒). A partir de este momento, estás autenticado.
+
+Paso 3: Pruebas de Lectura (CQRS - Historial y Saldo)
+Verificar Saldo Actual
+
+Busca el endpoint GET /api/v1/billeteras/mi-saldo.
+
+Haz clic en "Try it out" y luego en "Execute".
+
+Resultado Esperado: Un código HTTP 200 OK con un JSON que muestra tu saldo exacto (Ej. {"saldo": 0.00}).
+
+Verificar Historial de Movimientos
+
+Busca el endpoint GET /api/v1/billeteras/historial.
+
+Haz clic en "Try it out".
+
+Importante: En el campo de texto de pageable, borra absolutamente todo el contenido y déjalo en blanco para usar la paginación por defecto. Si da error, solo deja las "{ }" en el orden que esta, pero borrando todo su contenido interno, como si fuera un json vacio.
+
+Haz clic en "Execute".
+
+Resultado Esperado: Un código HTTP 200 OK. Verás una estructura JSON paginada mostrando la lista de transacciones (depósitos o débitos) de tu cuenta.
+
+Paso 4: Pruebas de Escritura (Motor Transaccional)
+Vamos a intentar realizar una transferencia bancaria para probar las validaciones de negocio (Domain-Driven Design).
+
+Busca el endpoint POST /api/v1/transferencias.
+
+Haz clic en "Try it out".
+
+En el campo obligatorio Idempotency-Key (Cabecera), ingresa un UUID válido para simular una transacción única. Puedes copiar este: A1234567-89AB-CDEF-0123-456789ABCDEF.
+
+En el campo Request body, modifica el JSON para que tenga datos reales. Por ejemplo:
+
+JSON
+{
+  "billeteraDestinoId": 15,
+  "monto": 10.50,
+  "concepto": "Pago de servicios"
+}
+Haz clic en "Execute".
+
+Resultados Esperados según las reglas de negocio:
+
+Si todo es correcto: 201 Created (o 200 OK) indicando que la transferencia fue exitosa.
+
+Si la billetera destino no existe: 404 Not Found indicando "La billetera de destino no existe en el sistema".
+
+Si no tienes fondos: 422 Unprocessable Entity indicando "Saldo insuficiente".
+
+Nota: Si en algún momento empiezas a recibir errores 403 Forbidden, es probable que hayas recargado la página (F5) o el token haya expirado. Simplemente repite el Paso 2 para volver a cerrar el candado.
