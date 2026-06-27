@@ -1,0 +1,13 @@
+Instala Java 21 y PostgreSQL.
+
+En Postgres, crea una base de datos vacía llamada fintech_db (con credenciales postgres / 102030#Asd%).
+
+Clona la rama develop desde GitHub.
+
+Abre el proyecto en el IDE y deja que Maven descargue todo.
+
+Corre la aplicación (Flyway creará las tablas al instante).
+
+Ejecuta la prueba GeneradorTokenTest para sacar el token JWT.
+
+Abre http://localhost:8080/swagger-ui.html, pega el token y ¡a probar!
